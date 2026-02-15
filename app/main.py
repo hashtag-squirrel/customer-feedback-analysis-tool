@@ -1,12 +1,12 @@
 from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, Query
 from pydantic import EmailStr
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Session, SQLModel, create_engine, select
 from contextlib import asynccontextmanager
+from app.models import Feedback
 
 
-class Feedback(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+class FeedbackDto:
     name: str
     email: EmailStr
     message: str
@@ -41,7 +41,11 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.post("/feedback/")
-def create_feedback(feedback: Feedback, session: SessionDep):
+def create_feedback(feedback_dto: FeedbackDto, session: SessionDep):
+    feedback = Feedback(
+        name=feedback_dto.name,
+        email=feedback_dto.email,
+        message=feedback_dto.message)
     session.add(feedback)
     session.commit()
     session.refresh(feedback)
