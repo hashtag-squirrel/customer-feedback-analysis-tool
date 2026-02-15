@@ -7,6 +7,6 @@ class Feedback(SQLModel, table=True):
     name: str
     email: EmailStr
     message: str
-    processed: bool
-    sentiment: str
-    topics: str
+    processed: bool | None = Field(default=False)
+    sentiment: str | None = Field(default=None)
+    topics: str | None = Field(default=None)

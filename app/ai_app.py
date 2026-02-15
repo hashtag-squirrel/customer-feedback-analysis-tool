@@ -1,32 +1,34 @@
 import os
 from openai import OpenAI
 from app.models import Feedback
+import json
 
-client = OpenAI(
-    api_key=os.environ.get("OPENAI_API_KEY"),
-)
 
-feedback_text = """
-your app is fast, but the last update broke login on my ipad.
-please fix asap, i need this for work.
-"""
+def get_ai_response(feedback_msg):
 
-sentiments = ['positive', 'neutral', 'negative']
-topics = ['login', 'performance', 'billing', 'ux', 'responses', 'customer service', 'other']
+    client = OpenAI(
+        api_key=os.environ.get("OPENAI_API_KEY"),
+    )
 
-schema = {
-    'sentiment': str,
-    'topics': str
-}
+    sentiments = ['positive', 'neutral', 'negative']
+    topics = ['login', 'performance', 'billing', 'ux', 'responses', 'customer service', 'other']
 
-response = client.responses.create(
-    model="gpt-5-mini",
-    instructions="You receive a feedback message from a customer."
-                 "You should return a json response including the message's sentiment"
-                 f"{sentiments}, as well as the topics covered in the message"
-                 f"which can be found in this list: {topics}."
-                 f"The json response should follow the schema {schema}.",
-    input=feedback_text,
-)
+    schema = {
+        'sentiment': str,
+        'topics': str
+    }
 
-print(response.output_text)
+    response = client.responses.create(
+        model="gpt-5-mini",
+        instructions="You receive a feedback message from a customer."
+                     "You should return a json response including the message's sentiment"
+                     f"{sentiments}, as well as the topics covered in the message"
+                     f"which can be found in this list: {topics}."
+                     f"The json response should follow the schema {schema}.",
+        input=feedback_msg,
+    )
+
+    response_object = json.loads(response.output_text)
+    print(response_object)
+
+    return response_object
