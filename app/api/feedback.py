@@ -34,8 +34,8 @@ def read_feedbacks(
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
 ) -> list[Feedback]:
-    feedback = session.exec(select(Feedback).offset(offset).limit(limit)).all()
-    return feedback
+    feedbacks = session.exec(select(Feedback).offset(offset).limit(limit)).all()
+    return feedbacks
 
 
 @router.get("/{feedback_id}")
