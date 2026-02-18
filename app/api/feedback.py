@@ -7,12 +7,12 @@ from app.clients.ai_client import OpenAiClient
 from app.clients.notify_client import NtfyNotifyClient
 
 
-router = APIRouter(prefix="/feedback")
+feedback_router = APIRouter(prefix="/feedback")
 ai_client = OpenAiClient()
 notify_client = NtfyNotifyClient()
 
 
-@router.post("/")
+@feedback_router.post("/")
 def create_feedback(
     feedback_dto: FeedbackUpdate,
     session: SessionDep,
@@ -30,7 +30,7 @@ def create_feedback(
     return feedback
 
 
-@router.get("/")
+@feedback_router.get("/")
 def read_feedbacks(
     session: SessionDep,
     offset: int = 0,
@@ -41,7 +41,7 @@ def read_feedbacks(
     return feedbacks
 
 
-@router.get("/{feedback_id}")
+@feedback_router.get("/{feedback_id}")
 def read_feedback(feedback_id: int, session: SessionDep) -> Feedback:
     feedback = session.get(Feedback, feedback_id)
     if not feedback:

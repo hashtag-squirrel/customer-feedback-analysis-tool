@@ -30,12 +30,11 @@ class AiClient(ABC):
 class OpenAiClient(AiClient):
 
     def __init__(self):
-        api_key = os.environ.get("OPENAI_API_KEY")
-
-        if not api_key:
+        if not os.environ.get("OPENAI_API_KEY"):
             raise ValueError("OpenAI API Key missing.")
 
-        self.ai_client = OpenAI(api_key)
+        # Environment variable is automatically used by the API
+        self.ai_client = OpenAI()
 
     def analyze_feedback(self, feedback_msg: str) -> Dict[str, str]:
         response = self.ai_client.responses.create(
