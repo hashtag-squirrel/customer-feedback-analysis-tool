@@ -5,7 +5,7 @@ from openai import OpenAI
 from abc import ABC, abstractmethod
 
 
-class AiService(ABC):
+class AiClient(ABC):
     sentiments: List[str] = ['positive', 'neutral', 'negative']
 
     topics: List[str] = [
@@ -23,16 +23,21 @@ class AiService(ABC):
         }
 
     @abstractmethod
-    def get_ai_response(self, feedback_msg: str):
+    def analyze_feedback(self, feedback_msg: str):
         pass
 
 
-class OpenAiService(AiService):
-    ai_client = OpenAI(
-        api_key=os.environ.get("OPENAI_API_KEY"),
-    )
+class OpenAiClient(AiClient):
 
-    def get_ai_response(self, feedback_msg: str) -> Dict[str, str]:
+    def __init__(self):
+        api_key = os.environ.get("OPENAI_API_KEY")
+
+        if not api_key:
+            raise ValueError("OpenAI API Key missing.")
+
+        self.ai_client = OpenAI(api_key)
+
+    def analyze_feedback(self, feedback_msg: str) -> Dict[str, str]:
         response = self.ai_client.responses.create(
             model="gpt-5-mini",
             instructions=f"""

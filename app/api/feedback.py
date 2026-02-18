@@ -3,12 +3,13 @@ from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
 from sqlmodel import select
 from app.models.feedback import Feedback, FeedbackUpdate
 from app.database import SessionDep, session_scope
-from app.services.ai import OpenAiService
-from app.notifier import notify_team
+from app.clients.ai_client import OpenAiClient
+from app.clients.notify_client import NtfyNotifyClient
 
 
 router = APIRouter(prefix="/feedback")
-ai_service = OpenAiService()
+ai_client = OpenAiClient()
+notify_client = NtfyNotifyClient()
 
 
 @router.post("/")
@@ -53,7 +54,7 @@ def analyze_one_feedback(feedback_id: int) -> None:
         feedback = session.get(Feedback, feedback_id)
         if not feedback:
             return
-        response = ai_service.get_ai_response(feedback.message)
+        response = ai_client.analyze_feedback(feedback.message)
         sentiment = response['sentiment']
         topics = response['topics']
         feedback.processed = True
@@ -61,7 +62,7 @@ def analyze_one_feedback(feedback_id: int) -> None:
         feedback.topics = topics
 
         if sentiment == 'negative':
-            notify_team(feedback)
+            notify_client.notify_team(feedback)
 
         try:
             session.commit()
