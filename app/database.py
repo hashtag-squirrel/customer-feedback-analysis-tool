@@ -1,10 +1,12 @@
 from fastapi import Depends
 from typing import Annotated
 from sqlmodel import Session, SQLModel, create_engine
+import os
 
 
+database_path = os.environ.get(key='DATABASE_PATH', default='/database')
 sqlite_file_name = "database.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
+sqlite_url = f"sqlite:///{database_path}/{sqlite_file_name}"
 
 connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, connect_args=connect_args)
