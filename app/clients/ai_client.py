@@ -1,14 +1,13 @@
 import os
 import json
-from typing import List, Dict
 from openai import OpenAI
 from abc import ABC, abstractmethod
 
 
 class AiClient(ABC):
-    sentiments: List[str] = ['positive', 'neutral', 'negative']
+    sentiments: list[str] = ['positive', 'neutral', 'negative']
 
-    topics: List[str] = [
+    topics: list[str] = [
             'login',
             'performance',
             'billing',
@@ -17,26 +16,26 @@ class AiClient(ABC):
             'customer service',
             'other']
 
-    schema: Dict[str, str] = {
+    schema: dict[str, str] = {
             'sentiment': str,
             'topics': str
         }
 
     @abstractmethod
-    def analyze_feedback(self, feedback_msg: str):
+    def analyze_feedback(self, feedback_msg: str) -> dict[str, str]:
         pass
 
 
 class OpenAiClient(AiClient):
 
-    def __init__(self):
+    def __init__(self) -> None:
         if not os.environ.get("OPENAI_API_KEY"):
             raise ValueError("OpenAI API Key missing.")
 
         # Environment variable is automatically used by the API
         self.ai_client = OpenAI()
 
-    def analyze_feedback(self, feedback_msg: str) -> Dict[str, str]:
+    def analyze_feedback(self, feedback_msg: str) -> dict[str, str]:
         response = self.ai_client.responses.create(
             model="gpt-5-mini",
             instructions=f"""

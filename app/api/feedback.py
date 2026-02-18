@@ -14,15 +14,15 @@ notify_client = NtfyNotifyClient()
 
 @feedback_router.post("/")
 def create_feedback(
-    feedback_dto: FeedbackUpdate,
+    feedback_update: FeedbackUpdate,
     session: SessionDep,
     background: BackgroundTasks
 ) -> Feedback:
 
     feedback = Feedback(
-        name=feedback_dto.name,
-        email=feedback_dto.email,
-        message=feedback_dto.message)
+        name=feedback_update.name,
+        email=feedback_update.email,
+        message=feedback_update.message)
     session.add(feedback)
     session.commit()
     session.refresh(feedback)
