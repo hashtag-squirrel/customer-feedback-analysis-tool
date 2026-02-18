@@ -4,6 +4,7 @@ from sqlmodel import select
 from app.models.feedback import Feedback, FeedbackUpdate
 from app.database import SessionDep, session_scope
 from app.services.ai import OpenAiService
+from app.notifier import notify_team
 
 
 router = APIRouter(prefix="/feedback")
@@ -34,7 +35,8 @@ def read_feedbacks(
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
 ) -> list[Feedback]:
-    feedbacks = session.exec(select(Feedback).offset(offset).limit(limit)).all()
+    feedbacks = session.exec(
+        select(Feedback).offset(offset).limit(limit)).all()
     return feedbacks
 
 
@@ -57,6 +59,10 @@ def analyze_one_feedback(feedback_id: int) -> None:
         feedback.processed = True
         feedback.sentiment = sentiment
         feedback.topics = topics
+
+        if sentiment == 'negative':
+            notify_team(feedback)
+
         try:
             session.commit()
         except Exception:
@@ -69,5 +75,6 @@ def check_unprocessed_feedback(
     limit: Annotated[int, Query(le=100)] = 100,
 ) -> None:
     with session_scope() as session:
-        feedbacks = session.exec(select(Feedback).offset(offset).limit(limit)).all()
+        feedbacks = session.exec(
+            select(Feedback).offset(offset).limit(limit)).all()
         [analyze_one_feedback(fb.id) for fb in feedbacks if not fb.processed]

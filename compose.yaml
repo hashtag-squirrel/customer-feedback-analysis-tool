@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    container_name: fastapi_app
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+    volumes:
+      - database:/database
+    restart: unless-stopped
+    networks:
+      - backend
+
+  
+  ntfy:
+    image: binwiederhier/ntfy
+    container_name: ntfy
+    command:
+      - serve
+    ports:
+      - 8001:80
+    restart: unless-stopped
+    init: true
+    networks:
+      - backend
+
+
+volumes:
+  database:
+
+
+networks:
+  backend:
+    driver: bridge
