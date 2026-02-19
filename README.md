@@ -171,3 +171,7 @@ In case the AI takes a long time to respond or is not available, the feedback ob
 
 - Scaling to 10x
     At its current state, the feedback API itself can handle a higher volume. However, if one wanted to make sure that it is performing at peak, one could add a load balancer to handle incoming traffic more efficiently.
+
+## Other notes
+
+Automated testing was omitted from this project. I had looked into unit testing and integration testing but the time constraints did not allow me to finish this. Specifically the integration tests were a bit above me at this point due to the asynchronicity of the application.
