@@ -66,6 +66,9 @@ As for the AI integration, OpenAI's API was chosen since this seemed like the mo
 
 To run the app, you need to have Docker. Then, in a console in the root directory you can use `docker compose up` to build and run the app.
 
+Link to API docs: http://127.0.0.1:8000/docs
+Link to ntfy: http://127.0.0.1:8001/feedback-notifications
+
 ### Environment Setup
 
 In order for the app to run correctly, you need to configure the `.env` file in the root directory. There is a file called `.env.example` that can be used as a blueprint. You only need to add your own OpenAI API key to run the app.
