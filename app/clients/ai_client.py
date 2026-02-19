@@ -26,7 +26,7 @@ class AiClient(ABC):
                 You should return a json response including the
                 message's sentiment {sentiments}, as well as the
                 topics covered in the message which can be found in
-                this list: {topics}. 
+                this list: {topics}.
                 The json response should follow the schema {schema}.
                 """
 
@@ -61,7 +61,7 @@ class OpenAiClient(AiClient):
                 if not isinstance(response_object, dict):
                     raise ValueError("Response JSON is not an object")
 
-                required_keys = self.schema.keys()
+                required_keys = {'sentiment', 'topics'}
 
                 if not required_keys.issubset(response_object.keys()):
                     missing = required_keys - response_object.keys()
